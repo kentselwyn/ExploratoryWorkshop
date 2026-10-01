@@ -114,6 +114,37 @@ class MNISTCNN(BaseModel):
         return self.classifier(self.features(x))
 
 
+def visualize_data(datasets, output_dir):
+    """Save up to 32 images with their labels from each MNIST split."""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    columns = 8
+    for split, dataset in datasets.items():
+        count = min(32, len(dataset))
+        rows = max(1, (count + columns - 1) // columns)
+        figure, axes = plt.subplots(
+            rows, columns, figsize=(columns * 1.8, rows * 2), squeeze=False,
+        )
+        try:
+            for axis in axes.flat:
+                axis.axis("off")
+                axis.set_box_aspect(1)
+            for index, axis in enumerate(axes.flat):
+                if index >= count:
+                    break
+                image, label = dataset[index]
+                axis.imshow(
+                    (image.detach().cpu().squeeze(0) * 0.3081 + 0.1307).clamp(0, 1),
+                    cmap="gray", vmin=0, vmax=1,
+                )
+                axis.set_title(f"Label: {int(label)}", fontsize=9)
+            figure.suptitle(f"{split.capitalize()} data samples")
+            figure.tight_layout(rect=(0, 0, 1, 0.97))
+            figure.savefig(output_dir / f"{split}_samples.png", dpi=150)
+        finally:
+            plt.close(figure)
+
+
 def build(config: dict[str, Any]) -> Lab:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     provider = MNISTDataProvider(
@@ -125,6 +156,7 @@ def build(config: dict[str, Any]) -> Lab:
     datasets = {
         split: provider.get_dataset(split) for split in ["train", "val", "test"]
     }
+    visualize_data(datasets, config["output_dir"])
     model = MNISTCNN(num_classes=10).to(device)
     return Lab(
         model=model,
