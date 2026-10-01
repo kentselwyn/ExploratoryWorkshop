@@ -1,0 +1,20 @@
+epochs: 25
+batch_size: 32
+learning_rate: 0.05
+device: cpu
+num_workers: 0
+seed: 42
+
+true_m: 2.0
+true_b: 1.0
+initial_m: 0.0
+initial_b: 0.0
+x_min: -2.0
+x_max: 2.0
+noise_std: 0.3
+train_size: 128
+val_size: 64
+test_size: 64
+
+gif_fps: 10
+output_dir: output/s00_basics

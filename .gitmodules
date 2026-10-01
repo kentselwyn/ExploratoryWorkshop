@@ -1,0 +1,3 @@
+[submodule "submodules/EasyTrain"]
+	path = submodules/EasyTrain
+	url = https://github.com/kentselwyn/EasyTrain.git

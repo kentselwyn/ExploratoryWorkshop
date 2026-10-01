@@ -1,1 +1,1 @@
-# ExploratoryWorkshop
+# Exploratory Workshop
